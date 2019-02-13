@@ -1,7 +1,5 @@
 const express = require('express'),
   bodyParser = require('body-parser'),
-  bcrypt = require('bcrypt'),
-  jwt = require('jsonwebtoken'),
   nodemon = require('nodemon'),
   morgan = require('morgan'),
   dotenv = require('dotenv'),
@@ -22,7 +20,8 @@ app.use(bodyParser.json());
 
 // routes
 app.post('/register', callback.register)
-
+app.post('/login', callback.login)
+app.get('/profile', callback.getUser)
 
 app.listen(port, () => {
   console.log(`Hey human, CORS-enabled server is now running at port ${port} 😏`)
