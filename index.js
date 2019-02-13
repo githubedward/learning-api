@@ -5,7 +5,8 @@ const express = require('express'),
   dotenv = require('dotenv'),
   cors = require('cors');
 
-const callback = require('./callback')
+// require auth router
+const authRoutes = require('./routes/auth')
 // instantiate express application
 const app = express()
 const port = process.env.PORT || 5000;
@@ -19,9 +20,7 @@ app.use(express.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 // routes
-app.post('/register', callback.register)
-app.post('/login', callback.login)
-app.get('/profile', callback.getUser)
+app.use('/', authRoutes)
 
 app.listen(port, () => {
   console.log(`Hey human, CORS-enabled server is now running at port ${port} 😏`)
