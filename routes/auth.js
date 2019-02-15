@@ -52,10 +52,12 @@ router.post('/login', (req, res) => {
 })
 
 const authorize = (req, res, next) => {
-  const token = req.headers.authorization;
-  console.log(token)
+  let token = req.headers['x-access-token'] || req.headers['authorization'];
   // if no token found, reject with 401 status
   if (!token) return res.status(401).json({"msg": "Token not found"})
+  // verify if token starts with bearer and remove bearer string
+  if (token.startsWith('Bearer ')) token = token.slice(7, token.length)
+  console.log(token)
   // if token is found, verify it
   const decoded = jwt.verify(token, process.env.SECRET_KEY);
   console.log(decoded)
