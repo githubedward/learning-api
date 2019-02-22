@@ -77,7 +77,7 @@ router.get("/profile", authorize, (req, res) => {
   console.log(username);
   user = Users.find(user => user.username === username);
   if (!user) return res.status(401).json({ msg: "Account not found" });
-  else res.json(user.username);
+  else res.json(user);
 });
 
 module.exports = router;
