@@ -31,7 +31,7 @@ router.post("/register", (req, res) => {
       status: "registered",
       ...newUser
     });
-    res.json({ msg: `User is successfully registered` });
+    res.json({ msg: `User "${newUser.username}" is successfully registered` });
   });
 });
 
