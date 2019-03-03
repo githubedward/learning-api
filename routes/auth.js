@@ -23,7 +23,7 @@ router.post("/register", (req, res) => {
     return res.status(400).json({ msg: "Username already taken" });
   }
   /* higher the numer, the more secure, but more expensive */
-  bcrypt.hash(newUser.password, 12, (err, hash) => {
+  bcrypt.hash(newUser.password, 10, (err, hash) => {
     if (err) return res.status(500).json(err);
     newUser.password = hash;
     Users.push(newUser);
@@ -39,7 +39,6 @@ router.post("/login", (req, res) => {
   let { username, password } = req.body;
   // find user
   let user = Users.find(user => user.username === username);
-
   if (!user) return res.status(401).json({ msg: "Account not found" });
   else {
     // check if password on file match the password from req.body
@@ -75,7 +74,8 @@ const authorize = (req, res, next) => {
 router.get("/profile", authorize, (req, res) => {
   const username = req.user.subject;
   console.log(username);
-  user = Users.find(user => user.username === username);
+  const user = { ...Users.find(user => user.username === username) };
+  delete user.password;
   if (!user) return res.status(401).json({ msg: "Account not found" });
   else res.json(user);
 });
