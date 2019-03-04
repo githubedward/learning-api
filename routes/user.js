@@ -49,6 +49,7 @@ router.post("/login", (req, res) => {
           { subject: user.username },
           process.env.SECRET_KEY
         );
+        console.log(typeof token);
         res.json({ token: token });
       } else res.status(401).json({ msg: "Invalid Password" });
     });
