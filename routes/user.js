@@ -86,14 +86,25 @@ router.post("/update-user", (req, res) => {
   if (userIndex < 0) return res.status(401).json({ msg: "Account not found" });
   else {
     delete updatedUser.oldUsername;
+    // modify user info
     Users[userIndex] = {
       ...Users[userIndex],
       ...updatedUser
     };
+    // make a copy of updated user info
     updatedUser = { ...Users[userIndex] };
     delete updatedUser.password;
-    console.log(Users);
-    res.json(updatedUser);
+    // create new token
+    const token = jwt.sign(
+      { subject: updatedUser.username },
+      process.env.SECRET_KEY
+    );
+    // assign both new token and update user as payload
+    const payload = {
+      token,
+      user: updatedUser
+    };
+    res.json(payload);
   }
 });
 
