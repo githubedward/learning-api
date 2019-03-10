@@ -1,14 +1,15 @@
 # Practice App
 
-## Libraries used
+Simple server app to handle request from my-app
+
+## Libraries/Framework used
+
 - Express
 - Bcrypt
 - Jsonwebtoken
-- nodemon
 
 ## Available Scripts
 
 In the project directory, you can run:
 
 ### npm start
-

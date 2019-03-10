@@ -62,23 +62,39 @@ const authorize = (req, res, next) => {
   if (!token) return res.status(401).json({ msg: "Token not found" });
   // verify if token starts with bearer and remove bearer string
   if (token.startsWith("Bearer ")) token = token.slice(7, token.length);
-  console.log(token);
   // if token is found, verify it
   const decoded = jwt.verify(token, process.env.SECRET_KEY);
-  console.log(decoded);
   if (!decoded) return res.status(401).json({ msg: "Invalid token" });
   // if token is authentic, store user at req.user
   req.user = decoded;
   next(); //calls next request handler functions
 };
 
-router.get("/profile", authorize, (req, res) => {
+router.get("/user", authorize, (req, res) => {
   const username = req.user.subject;
-  console.log(username);
   const user = { ...Users.find(user => user.username === username) };
   delete user.password;
   if (!user) return res.status(401).json({ msg: "Account not found" });
   else res.json(user);
+});
+
+router.post("/update-user", (req, res) => {
+  let updatedUser = req.body;
+  let userIndex = Users.findIndex(
+    user => user.username === updatedUser.oldUsername
+  );
+  if (userIndex < 0) return res.status(401).json({ msg: "Account not found" });
+  else {
+    delete updatedUser.oldUsername;
+    Users[userIndex] = {
+      ...Users[userIndex],
+      ...updatedUser
+    };
+    updatedUser = { ...Users[userIndex] };
+    delete updatedUser.password;
+    console.log(Users);
+    res.json(updatedUser);
+  }
 });
 
 module.exports = router;

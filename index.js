@@ -16,7 +16,6 @@ dotenv.config();
 app.use(cors());
 app.use(morgan("common"));
 app.use(express.urlencoded({ extended: false }));
-// app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // routes
