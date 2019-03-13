@@ -2,10 +2,16 @@ const bcrypt = require("bcrypt"),
   jwt = require("jsonwebtoken"),
   dotenv = require("dotenv"),
   express = require("express"),
-  router = express.Router();
+  router = express.Router(),
+  Pool = require("pg").Pool;
 
-// fake db
-const Users = [];
+const pool = new Pool({
+  user: "me",
+  host: "localhost",
+  database: "api",
+  password: "password",
+  port: 5432
+});
 
 dotenv.config();
 
@@ -18,21 +24,28 @@ router.use(
 );
 
 router.post("/register", (req, res) => {
-  const newUser = req.body;
-  if (Users.findIndex(user => user.username === newUser.username) !== -1) {
-    return res.status(400).json({ msg: "Username already taken" });
-  }
+  let { password } = req.body;
+  const { fullname, username } = req.body;
+
   /* higher the numer, the more secure, but more expensive */
-  bcrypt.hash(newUser.password, 10, (err, hash) => {
+  bcrypt.hash(password, 10, (err, hash) => {
     if (err) return res.status(500).json(err);
-    newUser.password = hash;
-    Users.push(newUser);
-    console.log({
-      status: "registered",
-      ...newUser
-    });
-    res.json({ msg: `User "${newUser.username}" is successfully registered` });
+    password = hash;
   });
+  pool.query(
+    "INSERT INTO users (name, username, password) VALUES ($1, $2, $3) RETURNING *",
+    [fullname, username, password],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json(err);
+      }
+      console.log(result.rows);
+      res.json({
+        msg: `User ${result.rows[0].username} created successfully`,
+        user: result.rows
+      });
+    }
+  );
 });
 
 router.post("/login", (req, res) => {
@@ -78,7 +91,7 @@ router.get("/user", authorize, (req, res) => {
   else res.json(user);
 });
 
-router.post("/update-user", (req, res) => {
+router.put("/update-user", (req, res) => {
   let updatedUser = req.body;
   let userIndex = Users.findIndex(
     user => user.username === updatedUser.oldUsername
