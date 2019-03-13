@@ -31,42 +31,47 @@ router.post("/register", (req, res) => {
   bcrypt.hash(password, 10, (err, hash) => {
     if (err) return res.status(500).json(err);
     password = hash;
-  });
-  pool.query(
-    "INSERT INTO users (name, username, password) VALUES ($1, $2, $3) RETURNING *",
-    [fullname, username, password],
-    (err, result) => {
-      if (err) {
-        return res.status(500).json(err);
+    pool.query(
+      "INSERT INTO users (name, username, password) VALUES ($1, $2, $3) RETURNING *",
+      [fullname, username, password],
+      (queryErr, result) => {
+        if (queryErr) {
+          return res.status(500).json(queryErr);
+        }
+        console.log(result.rows);
+        res.json({
+          msg: `User ${result.rows[0].username} created successfully`,
+          user: result.rows
+        });
       }
-      console.log(result.rows);
-      res.json({
-        msg: `User ${result.rows[0].username} created successfully`,
-        user: result.rows
-      });
-    }
-  );
+    );
+  });
 });
 
 router.post("/login", (req, res) => {
   let { username, password } = req.body;
   // find user
-  let user = Users.find(user => user.username === username);
-  if (!user) return res.status(401).json({ msg: "Account not found" });
-  else {
-    // check if password on file match the password from req.body
-    bcrypt.compare(password, user.password, (err, result) => {
-      if (result) {
-        // if passwords match, generate token and send back to client
-        const token = jwt.sign(
-          { subject: user.username },
-          process.env.SECRET_KEY
-        );
-        console.log(typeof token);
-        res.json({ token: token });
-      } else res.status(401).json({ msg: "Invalid Password" });
-    });
-  }
+  pool.query(
+    "SELECT password FROM users WHERE username = $1",
+    [username],
+    (err, queryresult) => {
+      if (err) return res.status(401).json({ msg: "Account not found" });
+      else {
+        const hashPW = queryresult.rows[0].password;
+        // check if password on file match the password from req.body
+        bcrypt.compare(password, hashPW, (err, result) => {
+          if (result) {
+            // if passwords match, generate token and send back to client
+            const token = jwt.sign(
+              { subject: username },
+              process.env.SECRET_KEY
+            );
+            res.json({ token: token });
+          } else res.status(401).json({ msg: "Invalid Password" });
+        });
+      }
+    }
+  );
 });
 
 const authorize = (req, res, next) => {
@@ -85,10 +90,17 @@ const authorize = (req, res, next) => {
 
 router.get("/user", authorize, (req, res) => {
   const username = req.user.subject;
-  const user = { ...Users.find(user => user.username === username) };
-  delete user.password;
-  if (!user) return res.status(401).json({ msg: "Account not found" });
-  else res.json(user);
+  pool.query(
+    "SELECT * FROM users WHERE username = $1",
+    [username],
+    (err, queryResult) => {
+      if (err) return res.status(401).json({ msg: "Account not found" });
+      const user = queryResult.rows[0];
+      user.fullname = user.name;
+      delete user.password;
+      res.json(user);
+    }
+  );
 });
 
 router.put("/update-user", (req, res) => {
