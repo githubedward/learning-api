@@ -1,24 +1,46 @@
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import model from "../../models";
+import authHelper from "./auth.helper";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-module.exports = {};
+const { User } = model;
+class Users {
+  /**
+   * @param {object} req
+   * @param {object} res
+   * @returns {object} user object
+   */
+  static async signUp(req, res) {
+    let { name, username, password } = req.body;
+    try {
+      password = authHelper.hashPassword(password);
+      const data = await User.create({ name, username, password });
+      const payload = {
+        status: "success",
+        data,
+        msg: `User ${username} is successfully registered`
+      };
+      return res.status(201).json(payload);
+    } catch (err) {
+      return res.status(401).json(err);
+    }
+  }
+}
 
-// // middleware
-// router.use(
-//   (timelog = (req, res, next) => {
-//     console.log("Time: ", Date.now());
-//     next();
-//   })
-// );
+export default Users;
+
+// const { User } = model;
+// class Users { static signUp(req, res) {
+//   const { name, username, email, password } = req.body
+// return User .create({ name, username, email, password })
+// .then(userData => res.status(201).send({ success: true, message: 'User successfully created', userData })) } }
 
 // router.post("/register", (req, res) => {
 //   let { password } = req.body;
 //   const { fullname, username } = req.body;
 
-//   /* higher the numer, the more secure, but more expensive */
+//   /* higher the numer, the more secure, but more expensive */x
 //   bcrypt.hash(password, 10, (err, hash) => {
 //     if (err) return res.status(500).json(err);
 //     password = hash;
