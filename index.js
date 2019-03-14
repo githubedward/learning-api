@@ -1,12 +1,11 @@
-const express = require("express"),
-  bodyParser = require("body-parser"),
-  nodemon = require("nodemon"),
-  morgan = require("morgan"),
-  dotenv = require("dotenv"),
-  cors = require("cors");
+import express from "express";
+import bodyParser from "body-parser";
+import morgan from "morgan";
+import dotenv from "dotenv";
+import cors from "cors";
 
 // require auth router
-const userRoutes = require("./routes/user");
+// const userRoutes = require("./routes/user");
 // instantiate express application
 const app = express();
 const port = process.env.PORT || 5000;
@@ -19,12 +18,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // routes
-app.use("/", userRoutes);
+// app.use("/", userRoutes);
 
-app
-  .listen(port, () => {
-    console.log(
-      `Hey human, CORS-enabled server is now running at port ${port} 😏`
-    );
-  })
-  .on("error", console.log);
+app.listen(port, () => {
+  console.log(
+    `Hey human, CORS-enabled server is now running at port ${port} 😏`
+  );
+});
