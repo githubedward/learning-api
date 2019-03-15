@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 
 // require auth router
-// const userRoutes = require("./routes/user");
+import authRoutes from "./server/routes/auth.routes";
 // instantiate express application
 const app = express();
 const port = process.env.PORT || 5000;
@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // routes
-// app.use("/", userRoutes);
+app.use("/", authRoutes);
 
 app.listen(port, () => {
   console.log(
