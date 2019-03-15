@@ -7,6 +7,7 @@ Simple server app to handle request from my-app
 - Express
 - Bcrypt
 - Jsonwebtoken
+- Postgres / sequelize
 
 ## Available Scripts
 
