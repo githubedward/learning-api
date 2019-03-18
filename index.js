@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 
 // require auth router
-import authRoutes from "./server/routes/auth.routes";
+import regAuthRoutes from "./server/routes/regAuth.routes";
 // instantiate express application
 const app = express();
 const port = process.env.PORT || 5000;
@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // routes
-app.use("/", authRoutes);
+app.use("/", regAuthRoutes);
 
 app.listen(port, () => {
   console.log(

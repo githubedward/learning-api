@@ -16,20 +16,27 @@ export default (sequelize, DataTypes) => {
           args: false,
           msg: "Please enter your username"
         },
-        unique: { args: true, msg: "Username already exists" }
-      },
-      email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: { args: true, msg: "Email address already registered" },
         validate: {
-          isValid: value => {
-            if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
-              throw new Error("Please enter valid email");
+          isNotShort: value => {
+            if (value.length < 6) {
+              throw new Error("Username should be at least 8 characters");
             }
           }
-        }
+        },
+        unique: { args: true, msg: "Username already exists" }
       },
+      // email: {
+      //   type: DataTypes.STRING,
+      //   allowNull: false,
+      //   unique: { args: true, msg: "Email address already registered" },
+      //   validate: {
+      //     isValid: value => {
+      //       if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
+      //         throw new Error("Please enter valid email");
+      //       }
+      //     }
+      //   }
+      // },
       password: {
         type: DataTypes.STRING,
         allowNull: { args: false, msg: "Please enter your password" },
