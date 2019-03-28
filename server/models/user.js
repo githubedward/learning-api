@@ -3,7 +3,7 @@ export default (sequelize, DataTypes) => {
   const User = sequelize.define(
     "User",
     {
-      name: {
+      fullname: {
         type: DataTypes.STRING,
         allowNull: {
           args: false,
@@ -23,7 +23,10 @@ export default (sequelize, DataTypes) => {
             }
           }
         },
-        unique: { args: true, msg: "Username already exists" }
+        unique: {
+          args: true,
+          msg: "Username already exists"
+        }
       },
       // email: {
       //   type: DataTypes.STRING,
@@ -42,8 +45,8 @@ export default (sequelize, DataTypes) => {
         allowNull: { args: false, msg: "Please enter your password" },
         validate: {
           isNotShort: value => {
-            if (value.length < 8) {
-              throw new Error("Password should be at least 8 characters");
+            if (value.length < 6) {
+              throw new Error("Password should be at least 6 characters");
             }
           }
         }

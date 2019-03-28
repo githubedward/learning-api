@@ -15,13 +15,13 @@ export default class regAuth {
    * @returns {object} returns user object
    */
   static async register(req, res) {
-    let { name, username, password /* , email */ } = req.body;
+    let { fullname, username, password } = req.body;
     try {
       password = authHelper.hashPassword(password);
       const data = await User.create({
-        name,
+        fullname,
         username,
-        password /* , email */
+        password
       });
       if (!data) return res.status(500).json(helper.error);
       return res.status(201).json(data);
@@ -45,11 +45,25 @@ export default class regAuth {
       });
       // if user not found, return an error
       if (!response)
-        return res.status(400).json({ message: "Account not found" });
+        return res
+          .status(400)
+          .json(
+            helper.generateError(
+              "username",
+              "Account not found. Can you please try again?"
+            )
+          );
       // if passwords don't match, return an error
       const user = response.dataValues;
       if (!authHelper.comparePassword(user.password, password))
-        return res.status(400).json({ message: "Invalid Password" });
+        return res
+          .status(400)
+          .json(
+            helper.generateError(
+              "password",
+              "Your username and password does not match. Can you please try again?"
+            )
+          );
       // otherwise, generate a token and return to client
       const token = authHelper.generateToken(user.id);
       return res.status(201).json({ token });

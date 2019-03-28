@@ -12,6 +12,7 @@ dotenv.config();
 export const hashPassword = password => {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(8));
 };
+
 /**
  * compare password
  * @param {string} hashPassword
@@ -21,6 +22,7 @@ export const hashPassword = password => {
 export const comparePassword = (hashPassword, password) => {
   return bcrypt.compareSync(password, hashPassword);
 };
+
 /**
  * generate token
  * @param {string} username
@@ -29,4 +31,17 @@ export const comparePassword = (hashPassword, password) => {
 export const generateToken = id => {
   const token = jwt.sign({ subject: id }, process.env.SECRET_KEY);
   return token;
+};
+
+/**
+ * generate error message
+ * @param {string} path
+ * @param {string} message
+ * @returns {object} error object
+ */
+export const generateError = (path, message) => {
+  return {
+    [path]: true,
+    message
+  };
 };
