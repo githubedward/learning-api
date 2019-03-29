@@ -4,6 +4,10 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+export const error = {
+  message: "Unidentified error"
+};
+
 /**
  * hash password method
  * @param {string} password

@@ -1,6 +1,5 @@
 import model from "../models";
 import * as authHelper from "../util/auth.helper";
-import * as helper from "../util/helper";
 
 import dotenv from "dotenv";
 
@@ -23,7 +22,7 @@ export default class regAuth {
         username,
         password
       });
-      if (!data) return res.status(500).json(helper.error);
+      if (!data) return res.status(500).json(authHelper.error);
       return res.status(201).json(data);
     } catch (err) {
       return res.status(401).json(err);
@@ -48,7 +47,7 @@ export default class regAuth {
         return res
           .status(400)
           .json(
-            helper.generateError(
+            authHelper.generateError(
               "username",
               "Account not found. Can you please try again?"
             )
@@ -59,7 +58,7 @@ export default class regAuth {
         return res
           .status(400)
           .json(
-            helper.generateError(
+            authHelper.generateError(
               "password",
               "Your username and password does not match. Can you please try again?"
             )
@@ -68,9 +67,10 @@ export default class regAuth {
       const token = authHelper.generateToken(user.id);
       return res.status(201).json({ token });
     } catch (err) {
-      return res.status(400).send(helper.error);
+      return res.status(400).send(authHelper.error);
     }
   }
+
   /**
    * authenticate a user
    * @param {object} req
@@ -87,7 +87,7 @@ export default class regAuth {
       const user = response.dataValues;
       return res.status(201).json(user);
     } catch {
-      return res.status(500).json(helper.error);
+      return res.status(500).json(authHelper.error);
     }
   }
 }
