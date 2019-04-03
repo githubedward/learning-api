@@ -1,6 +1,4 @@
-# Practice App
-
-Simple server app to handle request from my-app
+##Simple server app to handle request from my-app
 
 ## Libraries/Framework used
 
