@@ -50,10 +50,6 @@ export default (sequelize, DataTypes) => {
             }
           }
         }
-      },
-      active: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
       }
     },
     {}

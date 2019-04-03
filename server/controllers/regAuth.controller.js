@@ -52,8 +52,9 @@ export default class regAuth {
               "Account not found. Can you please try again?"
             )
           );
-      // if passwords don't match, return an error
+      // retrieved user
       const user = response.dataValues;
+      // if passwords don't match, return an error
       if (!authHelper.comparePassword(user.password, password))
         return res
           .status(400)
@@ -82,7 +83,7 @@ export default class regAuth {
       const id = req.user.subject;
       const response = await User.findOne({
         where: { id },
-        attributes: { exclude: ["password"] }
+        attributes: { exclude: ["password", "createdAt"] }
       });
       const user = response.dataValues;
       return res.status(201).json(user);
