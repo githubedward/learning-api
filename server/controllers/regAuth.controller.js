@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const { User } = model;
+const { Users, UserLogins } = model;
 export default class regAuth {
   /**
    * register a user
@@ -17,10 +17,14 @@ export default class regAuth {
     let { fullname, username, password } = req.body;
     try {
       password = authHelper.hashPassword(password);
-      const data = await User.create({
+      const userData = await Users.create({
         fullname,
+        username
+      });
+      const userLogin = await UserLogins.create({
         username,
-        password
+        password,
+        user_id: userData.dataValues.id
       });
       if (!data) return res.status(500).json(authHelper.error);
       return res.status(201).json(data);
@@ -39,7 +43,7 @@ export default class regAuth {
     try {
       const { username, password } = req.body;
       // retrieved user - username, password
-      const response = await User.findOne({
+      const response = await Users.findOne({
         where: { username }
       });
       // if user not found, return an error
@@ -81,7 +85,7 @@ export default class regAuth {
   static async authenticated(req, res) {
     try {
       const id = req.user.subject;
-      const response = await User.findOne({
+      const response = await Users.findOne({
         where: { id },
         attributes: { exclude: ["password", "createdAt"] }
       });
