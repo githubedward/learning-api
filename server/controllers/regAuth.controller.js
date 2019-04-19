@@ -18,16 +18,15 @@ export default class regAuth {
     try {
       password = authHelper.hashPassword(password);
       const userData = await Users.create({
-        fullname,
-        username
+        fullname
       });
-      const userLogin = await UserLogins.create({
+      await UserLogins.create({
         username,
         password,
         user_id: userData.dataValues.id
       });
-      if (!data) return res.status(500).json(authHelper.error);
-      return res.status(201).json(data);
+      if (!userData) return res.status(500).json(authHelper.error);
+      return res.status(201).json(userData);
     } catch (err) {
       return res.status(401).json(err);
     }
@@ -43,7 +42,7 @@ export default class regAuth {
     try {
       const { username, password } = req.body;
       // retrieved user - username, password
-      const response = await Users.findOne({
+      const response = await UserLogins.findOne({
         where: { username }
       });
       // if user not found, return an error
@@ -57,9 +56,9 @@ export default class regAuth {
             )
           );
       // retrieved user
-      const user = response.dataValues;
+      const logins = response.dataValues;
       // if passwords don't match, return an error
-      if (!authHelper.comparePassword(user.password, password))
+      if (!authHelper.comparePassword(logins.password, password))
         return res
           .status(400)
           .json(
@@ -69,10 +68,11 @@ export default class regAuth {
             )
           );
       // otherwise, generate a token and return to client
-      const token = authHelper.generateToken(user.id);
+      console.log(logins.user_id);
+      const token = authHelper.generateToken(logins.user_id);
       return res.status(201).json({ token });
     } catch (err) {
-      return res.status(400).send(authHelper.error);
+      return res.status(400).send(err);
     }
   }
 
@@ -87,7 +87,10 @@ export default class regAuth {
       const id = req.user.subject;
       const response = await Users.findOne({
         where: { id },
-        attributes: { exclude: ["password", "createdAt"] }
+        include: [
+          { model: UserLogins, as: "logins", attributes: ["username"] }
+        ],
+        attributes: { exclude: ["updatedAt"] }
       });
       const user = response.dataValues;
       return res.status(201).json(user);

@@ -10,24 +10,6 @@ module.exports = (sequelize, DataTypes) => {
           msg: "Please enter your name"
         }
       },
-      username: {
-        type: DataTypes.STRING,
-        allowNull: {
-          args: false,
-          msg: "Please enter your username"
-        },
-        validate: {
-          isNotShort: value => {
-            if (value.length < 6) {
-              throw new Error("Username should be at least 6 characters");
-            }
-          }
-        },
-        unique: {
-          args: true,
-          msg: "Username already exists"
-        }
-      },
       avatar: { type: DataTypes.STRING },
       status: {
         type: DataTypes.STRING,
@@ -38,7 +20,11 @@ module.exports = (sequelize, DataTypes) => {
     {}
   );
   Users.associate = function(models) {
-    // associations can be defined here
+    Users.hasOne(models.UserLogins, {
+      onDelete: "CASCADE",
+      foreignKey: "user_id",
+      as: "logins"
+    });
   };
   return Users;
 };

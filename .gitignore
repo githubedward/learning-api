@@ -3,6 +3,7 @@
 
 
 # misc
+*/archives
 .env
 .DS_Store
 .env.local

@@ -32,12 +32,17 @@ module.exports = (sequelize, DataTypes) => {
           }
         }
       },
-      user_id: { type: DataTypes.INTEGER, allowNull: false }
+      user_id: {
+        type: DataTypes.INTEGER,
+        unique: {
+          args: true
+        }
+      }
     },
     {}
   );
   UserLogins.associate = function(models) {
-    // associations can be defined here
+    // insert assocations here
   };
   return UserLogins;
 };
