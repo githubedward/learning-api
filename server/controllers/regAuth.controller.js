@@ -20,7 +20,6 @@ export default class regAuth {
       const userData = await Users.create({
         fullname
       });
-      console.log(userData);
       await UserLogins.create({
         username,
         password,
@@ -69,7 +68,6 @@ export default class regAuth {
             )
           );
       // otherwise, generate a token and return to client
-      console.log(logins.user_id);
       const token = authHelper.generateToken(logins.user_id);
       return res.status(201).json({ token });
     } catch (err) {
@@ -91,7 +89,7 @@ export default class regAuth {
         include: [
           { model: UserLogins, as: "logins", attributes: ["username"] }
         ],
-        attributes: { exclude: ["updatedAt"] }
+        attributes: { exclude: ["createdAt"] }
       });
       const user = response.dataValues;
       return res.status(201).json(user);

@@ -12,7 +12,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      avatar: {
+      avatarUrl: {
         type: Sequelize.STRING
       },
       status: {
