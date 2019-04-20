@@ -20,6 +20,7 @@ export default class regAuth {
       const userData = await Users.create({
         fullname
       });
+      console.log(userData);
       await UserLogins.create({
         username,
         password,
