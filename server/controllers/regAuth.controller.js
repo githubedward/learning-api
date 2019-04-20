@@ -94,8 +94,8 @@ export default class regAuth {
       });
       const user = response.dataValues;
       return res.status(201).json(user);
-    } catch {
-      return res.status(500).json(authHelper.error);
+    } catch (err) {
+      return res.status(500).json(err);
     }
   }
 }
