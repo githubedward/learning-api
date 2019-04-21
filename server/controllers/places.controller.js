@@ -16,9 +16,16 @@ export default class PlacesController {
   static async getAllPlaces(req, res) {
     try {
       const places = await Places.findAll({
-        // include: [
-        //   { model: Users, as: "users", attributes: ["fullname", "avatar"] }
-        // ]
+        include: [
+          {
+            model: Users,
+            as: "users",
+            attributes: ["fullname", "avatarUrl", "id"],
+            through: {
+              attributes: []
+            }
+          }
+        ]
       });
       res.status(201).json(places);
     } catch (err) {
@@ -68,36 +75,6 @@ export default class PlacesController {
       return res.status(201).json(users);
     } catch (err) {
       return res.status(401).json(err);
-    }
-  }
-
-  /**
-   * add place to a user
-   * @param {object} req
-   * @param {object} res
-   * @returns {object} returns place of a user
-   */
-  static async addPlaceToUser(req, res) {
-    try {
-      const { id } = req.body;
-      const newPlace = req.body;
-      delete newPlace.id;
-      const response = await Places.findOrCreate({
-        where: {
-          place_id: newPlace.place_id
-        },
-        defaults: {
-          ...newPlace
-        }
-      });
-      console.log(response);
-      await UserPlaces.create({
-        place_id: response.dataValues.id,
-        user_id: id
-      });
-      res.status(201).json(response);
-    } catch (err) {
-      res.status(401).json(err);
     }
   }
 }

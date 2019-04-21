@@ -76,4 +76,12 @@ export default class UserPlacesController {
         return res.status(401).json(err);
       });
   }
+
+  /**
+   * delete a place
+   * @param {object} req
+   * @param {object} res
+   * @returns {object} returns status object
+   */
+  static async deletePlace(req, res) {}
 }
