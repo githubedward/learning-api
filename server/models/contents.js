@@ -15,6 +15,10 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "user_id",
       as: "user"
     });
+    Contents.belongsTo(models.Places, {
+      foreignKey: "place_id",
+      as: "place"
+    });
     Contents.hasMany(models.ContentImages, {
       foreignKey: "content_id",
       as: "images",

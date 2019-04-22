@@ -11,7 +11,7 @@ export default class PlacesController {
    * get all places
    * @param {object} req
    * @param {object} res
-   * @returns {object} return all places object
+   * @returns {object} return array of place objects
    */
   static async getAllPlaces(req, res) {
     try {
@@ -35,47 +35,92 @@ export default class PlacesController {
   }
 
   /**
-   * get all places of user
+   * get a specific place
    * @param {object} req
    * @param {object} res
-   * @returns {object} return places of user object
+   * @returns {object} returns place object
    */
-  static async getPlacesOfUser(req, res) {
-    const { id } = req.body;
+  static async getPlace(req, res) {
     try {
-      const response = await UserPlaces.findAll({
-        where: {
-          user_id: id
-        },
-        include: [{ model: Places, as: "places" }]
-      });
-      const places = response.dataValues;
-      return res.status(201).json(places);
     } catch (err) {
       return res.status(401).json(err);
     }
   }
 
   /**
-   * get all users of place
+   * get user's places
    * @param {object} req
    * @param {object} res
-   * @returns {object} return users of place object
+   * @returns {object} returns array of place objects
    */
-  static async getUsersOfPlace(req, res) {
-    // retrieve
+  static async getPlacesByUser(req, res) {
     try {
-      const { id } = req.body;
-      const response = await UserPlaces.findAll({
-        where: {
-          place_id: id
-        },
-        include: [{ model: Users, as: "users" }]
+      const { id } = req.params;
+      const response = await Users.findOne({
+        where: { id },
+        include: [
+          {
+            model: Places,
+            as: "places",
+            attributes: ["id", "place_id"],
+            through: {
+              attributes: []
+            }
+          }
+        ]
       });
-      const users = response.dataValues;
-      return res.status(201).json(users);
+      return res.status(201).json(response);
     } catch (err) {
       return res.status(401).json(err);
     }
   }
+
+  /**
+   * add a place
+   * @param {object} req
+   * @param {object} res
+   * @returns {object} returns place object
+   */
+  static async addPlace(req, res) {
+    const newPlace = req.body;
+    Places.findOrCreate({
+      where: {
+        place_id: newPlace.place_id
+      },
+      defaults: {
+        ...newPlace
+      }
+    })
+      .then(([place, created]) => {
+        const { id: user_id } = req.params;
+        UserPlaces.findOrCreate({
+          where: {
+            user_id,
+            place_id: place.id
+          },
+          defaults: {
+            user_id,
+            place_id: place.id
+          }
+        }).then(([userPlace, created]) => {
+          if (!created)
+            return res.status(401).json({
+              status: "failed",
+              message: "User-Place relation already exists"
+            });
+          return res.status(201).json(place);
+        });
+      })
+      .catch(err => {
+        return res.status(401).json(err);
+      });
+  }
+
+  /**
+   * delete a place
+   * @param {object} req
+   * @param {object} res
+   * @returns {object} returns status object
+   */
+  static async removePlace(req, res) {}
 }

@@ -8,13 +8,60 @@ const { Users, Places, Contents, ContentImages, ContentLikes } = model;
 
 export default class ContentController {
   /**
-   * get all user content
+   * get all user contents
    * @param {object} req
    * @param {object} res
-   * @returns {object} returns content object
+   * @returns {object} returns array of content objects by user
    */
-  static async getAllContents(req, res) {
+  static async getAllContentsByUser(req, res) {
     try {
+      const { user_id } = req.params;
+      const contents = await Contents.findAll({
+        where: { user_id },
+        include: [
+          {
+            model: Users,
+            as: "user",
+            attributes: ["id", "fullname", "avatarUrl"]
+          },
+          {
+            model: Places,
+            as: "place",
+            attributes: ["id", "name", "address", "place_id"]
+          }
+        ]
+      });
+      return res.status(201).json(contents);
+    } catch (err) {
+      return res.status(401).json(err);
+    }
+  }
+
+  /**
+   * get all place contents
+   * @param {object} req
+   * @param {object} res
+   * @returns {object} returns array of content objects by place
+   */
+  static async getAllContentsByPlace(req, res) {
+    try {
+      const { place_id } = req.params;
+      const contents = await Contents.findAll({
+        where: { place_id },
+        include: [
+          {
+            model: Users,
+            as: "user",
+            attributes: ["id", "fullname", "avatarUrl"]
+          },
+          {
+            model: Places,
+            as: "place",
+            attributes: ["id", "name", "address", "place_id"]
+          }
+        ]
+      });
+      return res.status(201).json(contents);
     } catch (err) {
       return res.status(401).json(err);
     }
@@ -28,6 +75,23 @@ export default class ContentController {
    */
   static async getContent(req, res) {
     try {
+      const { content_id } = req.params;
+      const content = await Contents.findOne({
+        where: { id: content_id },
+        include: [
+          {
+            model: Users,
+            as: "user",
+            attributes: ["id", "fullname", "avatarUrl"]
+          },
+          {
+            model: Places,
+            as: "place",
+            attributes: ["id", "name", "address", "place_id"]
+          }
+        ]
+      });
+      return res.status(201).json(content);
     } catch (err) {
       return res.status(401).json(err);
     }
@@ -41,16 +105,18 @@ export default class ContentController {
    */
   static async createContent(req, res) {
     try {
-      const { text, user_id, place_id, imageUrl } = req.body;
+      const { text, user_id, place_id, imageUrls } = req.body;
       const response = await Contents.create({
         text,
         user_id,
         place_id
       });
-      if (imageUrl)
-        await ContentImages.create({
-          content_id: response.dataValues.id,
-          imageUrl
+      if (imageUrls)
+        imageUrls.map(async imageUrl => {
+          await ContentImages.create({
+            content_id: response.dataValues.id,
+            imageUrl
+          });
         });
       const savedContent = await Contents.findOne({
         where: { id: response.dataValues.id },
@@ -74,7 +140,7 @@ export default class ContentController {
    * @param {object} res
    * @returns {object} returns response status
    */
-  static async updateContentText(req, res) {}
+  static async updateContent(req, res) {}
 
   /**
    * delete content

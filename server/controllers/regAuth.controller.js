@@ -1,5 +1,5 @@
 import model from "../models";
-import * as authHelper from "../util/auth.helper";
+import * as authHelper from "../utils/auth.helper";
 
 import dotenv from "dotenv";
 
