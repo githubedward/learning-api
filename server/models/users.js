@@ -24,8 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     Users.belongsToMany(models.Places, {
       through: models.UserPlaces,
       foreignKey: "user_id",
-      as: "places",
-      onDelete: "CASCADE"
+      as: "places"
     });
     Users.hasMany(models.Contents, {
       foreignKey: "user_id",

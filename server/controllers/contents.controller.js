@@ -15,9 +15,8 @@ export default class ContentController {
    */
   static async getAllContentsByUser(req, res) {
     try {
-      const { user_id } = req.params;
       const contents = await Contents.findAll({
-        where: { user_id },
+        where: { user_id: req.params.user_id },
         include: [
           {
             model: Users,
@@ -28,7 +27,13 @@ export default class ContentController {
             model: Places,
             as: "place",
             attributes: ["id", "name", "address", "place_id"]
-          }
+          },
+          {
+            model: ContentImages,
+            as: "images",
+            attributes: ["imageUrl"]
+          },
+          { model: ContentLikes, as: "likes", attributes: ["id", "user_id"] }
         ]
       });
       return res.status(201).json(contents);
@@ -45,9 +50,8 @@ export default class ContentController {
    */
   static async getAllContentsByPlace(req, res) {
     try {
-      const { place_id } = req.params;
       const contents = await Contents.findAll({
-        where: { place_id },
+        where: { place_id: req.params.place_id },
         include: [
           {
             model: Users,
@@ -58,7 +62,13 @@ export default class ContentController {
             model: Places,
             as: "place",
             attributes: ["id", "name", "address", "place_id"]
-          }
+          },
+          {
+            model: ContentImages,
+            as: "images",
+            attributes: ["imageUrl"]
+          },
+          { model: ContentLikes, as: "likes", attributes: ["id", "user_id"] }
         ]
       });
       return res.status(201).json(contents);
@@ -75,9 +85,8 @@ export default class ContentController {
    */
   static async getContent(req, res) {
     try {
-      const { content_id } = req.params;
       const content = await Contents.findOne({
-        where: { id: content_id },
+        where: { id: req.params.id },
         include: [
           {
             model: Users,
@@ -88,7 +97,13 @@ export default class ContentController {
             model: Places,
             as: "place",
             attributes: ["id", "name", "address", "place_id"]
-          }
+          },
+          {
+            model: ContentImages,
+            as: "images",
+            attributes: ["imageUrl"]
+          },
+          { model: ContentLikes, as: "likes", attributes: ["id", "user_id"] }
         ]
       });
       return res.status(201).json(content);
@@ -106,6 +121,10 @@ export default class ContentController {
   static async createContent(req, res) {
     try {
       const { text, user_id, place_id, imageUrls } = req.body;
+      const checkPlace = await Places.findOne({
+        where: { id: place_id }
+      });
+      if (!checkPlace) return res.status(401).json({ status: "Failed" });
       const response = await Contents.create({
         text,
         user_id,
@@ -123,9 +142,10 @@ export default class ContentController {
         include: [
           {
             model: ContentImages,
-            as: "images"
+            as: "images",
+            attributes: ["imageUrl"]
           },
-          { model: ContentLikes, as: "likes" }
+          { model: ContentLikes, as: "likes", attributes: ["id", "user_id"] }
         ]
       });
       return res.status(201).json(savedContent);
@@ -148,7 +168,17 @@ export default class ContentController {
    * @param {object} res
    * @returns {object} returns response status
    */
-  static async deleteContent(req, res) {}
+  static async deleteContent(req, res) {
+    try {
+      const deletedContent = await Contents.destroy({
+        where: { id: req.params.id }
+      });
+      if (deletedContent) return res.status(201).json({ status: "Success" });
+      return res.status(401).json({ status: "Failed" });
+    } catch (err) {
+      return res.status(401).json(err);
+    }
+  }
 
   /**
    * like content
@@ -156,7 +186,21 @@ export default class ContentController {
    * @param {object} res
    * @returns {object} returns response status
    */
-  static async addLike(req, res) {}
+  static async addLike(req, res) {
+    const { id: content_id } = req.params;
+    const { user_id } = req.body;
+    ContentLikes.findOrCreate({
+      where: { content_id, user_id },
+      defaults: { content_id, user_id }
+    })
+      .then(([liked, created]) => {
+        if (!created) return res.status(401).json({ message: "Failed" });
+        res.status(201).json(liked);
+      })
+      .catch(err => {
+        return res.status(401).json(err);
+      });
+  }
 
   /**
    * remove like
@@ -164,5 +208,15 @@ export default class ContentController {
    * @param {object} res
    * @returns {object} returns response status
    */
-  static async removeLike(req, res) {}
+  static async removeLike(req, res) {
+    try {
+      const removedLike = await ContentLikes.destroy({
+        where: { user_id: req.params.user_id }
+      });
+      if (removedLike) return res.status(201).json({ status: "Success" });
+      return res.status(401).json({ status: "Failed" });
+    } catch (err) {
+      return res.status(401).json(err);
+    }
+  }
 }

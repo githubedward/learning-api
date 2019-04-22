@@ -15,12 +15,10 @@ export default class UsersController {
    */
   static async updateUserFullname(req, res) {
     try {
-      const { id } = req.params;
-      const { newFullname } = req.body;
       const updatedUser = await Users.update(
-        { fullname: newFullname },
+        { fullname: req.body.newFullname },
         {
-          where: { id },
+          where: { id: req.params.id },
           returning: true
         }
       );
@@ -38,15 +36,13 @@ export default class UsersController {
    */
   static async updateUsername(req, res) {
     try {
-      const { id } = req.params;
-      const { newUsername } = req.body;
       // update UserLogins
       const response = await UserLogins.update(
         {
-          username: newUsername
+          username: req.body.newUsername
         },
         {
-          where: { user_id: id },
+          where: { user_id: req.params.id },
           returning: true
         }
       );
@@ -67,12 +63,10 @@ export default class UsersController {
    */
   static async updateUserStatus(req, res) {
     try {
-      const { id } = req.params;
-      const { newStatus } = req.body;
       const updatedUser = await Users.update(
-        { status: newStatus },
+        { status: req.body.status },
         {
-          where: { id },
+          where: { id: req.params.id },
           returning: true
         }
       );
@@ -90,12 +84,10 @@ export default class UsersController {
    */
   static async updateAvatarUrl(req, res) {
     try {
-      const { id } = req.params;
-      const { newAvatarUrl } = req.body;
       const updatedUser = await Users.update(
-        { avatarUrl: newAvatarUrl },
+        { avatarUrl: req.body.newAvatarUrl },
         {
-          where: { id },
+          where: { id: req.params.id },
           returning: true
         }
       );

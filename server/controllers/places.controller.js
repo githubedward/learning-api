@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const { Users, UserPlaces, Places } = model;
+const { Users, UserPlaces, Places, Contents } = model;
 
 export default class PlacesController {
   /**
@@ -24,6 +24,11 @@ export default class PlacesController {
             through: {
               attributes: []
             }
+          },
+          {
+            model: Contents,
+            as: "contents",
+            attributes: ["id"]
           }
         ],
         attributes: { exclude: ["createdAt"] }
@@ -42,6 +47,10 @@ export default class PlacesController {
    */
   static async getPlace(req, res) {
     try {
+      const place = await Places.findOne({
+        where: { id: req.params.id }
+      });
+      return res.status(201).json(place);
     } catch (err) {
       return res.status(401).json(err);
     }
@@ -55,9 +64,9 @@ export default class PlacesController {
    */
   static async getPlacesByUser(req, res) {
     try {
-      const { id } = req.params;
-      const response = await Users.findOne({
-        where: { id },
+      const userPlaces = await Users.findOne({
+        where: { id: req.params.id },
+        attributes: ["id"],
         include: [
           {
             model: Places,
@@ -69,7 +78,7 @@ export default class PlacesController {
           }
         ]
       });
-      return res.status(201).json(response);
+      return res.status(201).json(userPlaces);
     } catch (err) {
       return res.status(401).json(err);
     }
@@ -105,7 +114,6 @@ export default class PlacesController {
         }).then(([userPlace, created]) => {
           if (!created)
             return res.status(401).json({
-              status: "failed",
               message: "User-Place relation already exists"
             });
           return res.status(201).json(place);
@@ -122,5 +130,19 @@ export default class PlacesController {
    * @param {object} res
    * @returns {object} returns status object
    */
-  static async removePlace(req, res) {}
+  static async removePlace(req, res) {
+    try {
+      const deletedPlace = await Places.destroy({
+        where: { id: req.params.id }
+      });
+      const deletedContents = await Contents.destroy({
+        where: { place_id: id }
+      });
+      if (deletedPlace && deletedContents)
+        return res.status(201).json({ status: "Success" });
+      return res.status(401).json({ status: "Failed" });
+    } catch (err) {
+      return res.status(401).json(err);
+    }
+  }
 }

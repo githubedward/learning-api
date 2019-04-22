@@ -17,7 +17,8 @@ module.exports = (sequelize, DataTypes) => {
     });
     Contents.belongsTo(models.Places, {
       foreignKey: "place_id",
-      as: "place"
+      as: "place",
+      onDelete: "CASCADE"
     });
     Contents.hasMany(models.ContentImages, {
       foreignKey: "content_id",

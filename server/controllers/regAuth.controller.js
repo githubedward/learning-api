@@ -83,9 +83,8 @@ export default class regAuthController {
    */
   static async authenticated(req, res) {
     try {
-      const id = req.user.subject;
       const response = await Users.findOne({
-        where: { id },
+        where: { id: req.user.subject.id },
         include: [{ model: UserLogins, as: "logins", attributes: ["username"] }]
       });
       const user = response.dataValues;
