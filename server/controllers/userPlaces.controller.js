@@ -18,12 +18,12 @@ export default class UserPlacesController {
       const { id } = req.params;
       const response = await Users.findOne({
         where: { id },
-        attributes: { exclude: ["createdAt", "updatedAt"] },
+        attributes: { exclude: ["createdAt"] },
         include: [
           {
             model: Places,
             as: "places",
-            attributes: { exclude: ["updatedAt", "createdAt"] },
+            attributes: ["id", "place_id"],
             through: {
               attributes: []
             }

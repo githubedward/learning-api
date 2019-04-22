@@ -25,7 +25,8 @@ export default class PlacesController {
               attributes: []
             }
           }
-        ]
+        ],
+        attributes: { exclude: ["createdAt"] }
       });
       res.status(201).json(places);
     } catch (err) {

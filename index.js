@@ -9,6 +9,8 @@ import regAuthRoutes from "./server/routes/regAuth.routes";
 import placesRoutes from "./server/routes/places.routes";
 import usersRoutes from "./server/routes/users.routes";
 import userPlacesRoutes from "./server/routes/userPlaces.routes";
+import contentsRoutes from "./server/routes/contents.routes";
+
 // instantiate express application
 const app = express();
 const port = process.env.PORT || 5000;
@@ -25,6 +27,7 @@ app.use("/", regAuthRoutes);
 app.use("/users", usersRoutes);
 app.use("/user-places", userPlacesRoutes);
 app.use("/places", placesRoutes);
+app.use("/contents", contentsRoutes);
 
 app.listen(port, () => {
   console.log(
