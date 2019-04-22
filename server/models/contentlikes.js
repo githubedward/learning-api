@@ -4,8 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     "ContentLikes",
     {
       content_id: { type: DataTypes.INTEGER, allowNull: false },
-      user_id: { type: DataTypes.INTEGER, allowNull: false },
-      timestamp: { type: DataTypes.INTEGER, allowNull: false }
+      user_id: { type: DataTypes.INTEGER }
     },
     {}
   );

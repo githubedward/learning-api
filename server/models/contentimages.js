@@ -3,9 +3,8 @@ module.exports = (sequelize, DataTypes) => {
   const ContentImages = sequelize.define(
     "ContentImages",
     {
-      imageUrl: { type: DataTypes.STRING, allowNull: false },
-      content_id: { type: DataTypes.INTEGER, allowNull: false },
-      timestamp: { type: DataTypes.INTEGER, allowNull: false }
+      imageUrl: { type: DataTypes.STRING },
+      content_id: { type: DataTypes.INTEGER, allowNull: false }
     },
     {}
   );

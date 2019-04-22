@@ -4,7 +4,6 @@ module.exports = (sequelize, DataTypes) => {
     "Contents",
     {
       text: { type: DataTypes.STRING, allowNull: false },
-      timestamp: { type: DataTypes.INTEGER, allowNull: false },
       user_id: { type: DataTypes.INTEGER, allowNull: false },
       place_id: { type: DataTypes.INTEGER, allowNull: false }
     },

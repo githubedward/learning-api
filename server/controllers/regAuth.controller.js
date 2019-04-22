@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const { Users, UserLogins } = model;
-export default class regAuth {
+export default class regAuthController {
   /**
    * register a user
    * @param {object} req
@@ -86,10 +86,7 @@ export default class regAuth {
       const id = req.user.subject;
       const response = await Users.findOne({
         where: { id },
-        include: [
-          { model: UserLogins, as: "logins", attributes: ["username"] }
-        ],
-        attributes: { exclude: ["createdAt"] }
+        include: [{ model: UserLogins, as: "logins", attributes: ["username"] }]
       });
       const user = response.dataValues;
       return res.status(201).json(user);
