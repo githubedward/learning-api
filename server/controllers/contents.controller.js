@@ -160,7 +160,36 @@ export default class ContentController {
    * @param {object} res
    * @returns {object} returns response status
    */
-  static async updateContent(req, res) {}
+  static async updateContent(req, res) {
+    try {
+      const { text, imageUrls } = req.body;
+      const response = await Contents.update(
+        { text },
+        { where: { id: req.params.id }, returning: true }
+      );
+      if (imageUrls)
+        imageUrls.map(async imageUrl => {
+          await ContentImages.update(
+            { imageUrl },
+            { where: { content_id: response[1][0].id }, returning: true }
+          );
+        });
+      const updatedContent = await Contents.findOne({
+        where: { id: response[1][0].id },
+        include: [
+          {
+            model: ContentImages,
+            as: "images",
+            attributes: ["imageUrl"]
+          },
+          { model: ContentLikes, as: "likes", attributes: ["id", "user_id"] }
+        ]
+      });
+      return res.status(201).json(updatedContent);
+    } catch (err) {
+      return res.status(401).json(err);
+    }
+  }
 
   /**
    * delete content
