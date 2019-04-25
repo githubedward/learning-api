@@ -18,7 +18,7 @@ export default class UsersController {
       const updatedUser = await Users.update(
         { fullname: req.body.newFullname },
         {
-          where: { id: req.params.id },
+          where: { id: req.user.subject },
           returning: true
         }
       );
@@ -42,7 +42,7 @@ export default class UsersController {
           username: req.body.newUsername
         },
         {
-          where: { user_id: req.params.id },
+          where: { user_id: req.user.subject },
           returning: true
         }
       );
@@ -66,7 +66,7 @@ export default class UsersController {
       const updatedUser = await Users.update(
         { status: req.body.status },
         {
-          where: { id: req.params.id },
+          where: { id: req.user.subject },
           returning: true
         }
       );
@@ -87,7 +87,7 @@ export default class UsersController {
       const updatedUser = await Users.update(
         { avatarUrl: req.body.newAvatarUrl },
         {
-          where: { id: req.params.id },
+          where: { id: req.user.subject },
           returning: true
         }
       );

@@ -65,7 +65,7 @@ export default class PlacesController {
   static async getPlacesByUser(req, res) {
     try {
       const userPlaces = await Users.findOne({
-        where: { id: req.params.id },
+        where: { id: req.user.subject },
         attributes: ["id"],
         include: [
           {
@@ -101,7 +101,7 @@ export default class PlacesController {
       }
     })
       .then(([place, created]) => {
-        const { id: user_id } = req.params;
+        const user_id = req.user.subject;
         UserPlaces.findOrCreate({
           where: {
             user_id,

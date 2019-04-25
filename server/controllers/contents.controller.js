@@ -16,7 +16,7 @@ export default class ContentController {
   static async getAllContentsByUser(req, res) {
     try {
       const contents = await Contents.findAll({
-        where: { user_id: req.params.user_id },
+        where: { user_id: req.user.subject },
         include: [
           {
             model: Users,
@@ -51,7 +51,7 @@ export default class ContentController {
   static async getAllContentsByPlace(req, res) {
     try {
       const contents = await Contents.findAll({
-        where: { place_id: req.params.place_id },
+        where: { place_id: req.params.id },
         include: [
           {
             model: Users,
@@ -120,7 +120,8 @@ export default class ContentController {
    */
   static async createContent(req, res) {
     try {
-      const { text, user_id, place_id, imageUrls } = req.body;
+      const { text, place_id, imageUrls } = req.body;
+      const user_id = req.user.subject;
       const checkPlace = await Places.findOne({
         where: { id: place_id }
       });
@@ -217,7 +218,7 @@ export default class ContentController {
    */
   static async addLike(req, res) {
     const { id: content_id } = req.params;
-    const { user_id } = req.body;
+    const user_id = req.user.subject;
     ContentLikes.findOrCreate({
       where: { content_id, user_id },
       defaults: { content_id, user_id }
@@ -240,7 +241,7 @@ export default class ContentController {
   static async removeLike(req, res) {
     try {
       const removedLike = await ContentLikes.destroy({
-        where: { user_id: req.params.user_id }
+        where: { user_id: req.user.subject }
       });
       if (removedLike) return res.status(201).json({ status: "Success" });
       return res.status(401).json({ status: "Failed" });
