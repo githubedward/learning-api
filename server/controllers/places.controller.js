@@ -111,12 +111,30 @@ export default class PlacesController {
             user_id,
             place_id: place.id
           }
-        }).then(([userPlace, created]) => {
+        }).then(async ([userPlace, created]) => {
           if (!created)
             return res.status(401).json({
               message: "User-Place relation already exists"
             });
-          return res.status(201).json(place);
+          const savedPlace = await Places.findOne({
+            where: { id: place.id },
+            include: [
+              {
+                model: Users,
+                as: "users",
+                attributes: ["fullname", "avatarUrl", "id"],
+                through: {
+                  attributes: []
+                }
+              },
+              {
+                model: Contents,
+                as: "contents",
+                attributes: ["id"]
+              }
+            ]
+          });
+          return res.status(201).json(savedPlace);
         });
       })
       .catch(err => {
