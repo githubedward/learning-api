@@ -4,6 +4,7 @@ import * as authMiddleware from "../middlewares/auth.middleware";
 
 const router = express.Router();
 
+router.get("/all", authMiddleware.authorize, users.getAllUsers);
 router.put("/username", authMiddleware.authorize, users.updateUsername);
 router.put("/fullname", authMiddleware.authorize, users.updateUserFullname);
 router.put("/status", authMiddleware.authorize, users.updateUserStatus);

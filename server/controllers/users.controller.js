@@ -1,14 +1,36 @@
 import model from "../models";
+const Sequelize = require("sequelize");
 
 import dotenv from "dotenv";
 
 dotenv.config();
 
+const Op = Sequelize.Op;
 const { Users, UserLogins } = model;
 
 export default class UsersController {
+  static async getAllUsers(req, res) {
+    /**
+     * get all users function
+     * @param {object} req
+     * @param {object} res
+     * @returns {object} returns users
+     */
+    try {
+      const allUsers = await Users.findAll({
+        attributes: ["id", "fullname", "avatarUrl"]
+      });
+      const filteredUsers = allUsers.filter(
+        user => user.id !== req.user.subject
+      );
+      return res.status(201).json(filteredUsers);
+    } catch (err) {
+      return res.status(401).json(err);
+    }
+  }
+
   /**
-   * update user fullname
+   * update user fullname function
    * @param {object} req
    * @param {object} res
    * @returns {object} returns updated user data
@@ -29,7 +51,7 @@ export default class UsersController {
   }
 
   /**
-   * update username
+   * update username function
    * @param {object} req
    * @param {object} res
    * @returns {object} returns updated user data
@@ -56,7 +78,7 @@ export default class UsersController {
   }
 
   /**
-   * update user status
+   * update user status function
    * @param {object} req
    * @param {object} res
    * @returns {object} returns updated user data
