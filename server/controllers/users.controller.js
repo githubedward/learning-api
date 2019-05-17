@@ -1,11 +1,11 @@
 import model from "../models";
-const Sequelize = require("sequelize");
+// const Sequelize = require("sequelize");
 
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const Op = Sequelize.Op;
+// const Op = Sequelize.Op;
 const { Users, UserLogins } = model;
 
 export default class UsersController {
@@ -18,7 +18,7 @@ export default class UsersController {
      */
     try {
       const allUsers = await Users.findAll({
-        attributes: ["id", "fullname", "avatarUrl"]
+        attributes: ["id", "fullname", "avatarUrl", "status"]
       });
       const filteredUsers = allUsers.filter(
         user => user.id !== req.user.subject
