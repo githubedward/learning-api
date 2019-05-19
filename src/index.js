@@ -1,3 +1,4 @@
+import "@babel/polyfill";
 import express from "express";
 import bodyParser from "body-parser";
 import morgan from "morgan";
@@ -22,7 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // routes
-app.use("/", regAuthRoutes);
+app.use("", regAuthRoutes);
 app.use("/users", usersRoutes);
 app.use("/places", placesRoutes);
 app.use("/contents", contentsRoutes);

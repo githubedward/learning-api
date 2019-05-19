@@ -5,15 +5,21 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --exec babel-node index.js"
+    "dev": "nodemon --exec babel-node ./src/index.js",
+    "clean": "rm -rf build && mkdir build",
+    "build-babel": "babel -d ./build ./src -s",
+    "build": "npm run clean && npm run build-babel",
+    "start": "npm run build && node ./build/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.3.4",
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.4",
     "@babel/node": "^7.2.2",
+    "@babel/polyfill": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
     "bcrypt": "^3.0.4",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
@@ -27,8 +33,6 @@
     "sequelize-cli": "^5.4.0"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.3.4",
-    "babel-preset-env": "^1.7.0",
     "nodemon": "^1.18.10"
   }
 }
