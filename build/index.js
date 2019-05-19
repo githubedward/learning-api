@@ -1,5 +1,7 @@
 "use strict";
 
+require("@babel/polyfill");
+
 var _express = _interopRequireDefault(require("express"));
 
 var _bodyParser = _interopRequireDefault(require("body-parser"));
@@ -10,13 +12,13 @@ var _dotenv = _interopRequireDefault(require("dotenv"));
 
 var _cors = _interopRequireDefault(require("cors"));
 
-var _regAuth = _interopRequireDefault(require("../server/routes/regAuth.routes"));
+var _regAuth = _interopRequireDefault(require("./server/routes/regAuth.routes"));
 
-var _places = _interopRequireDefault(require("../server/routes/places.routes"));
+var _places = _interopRequireDefault(require("./server/routes/places.routes"));
 
-var _users = _interopRequireDefault(require("../server/routes/users.routes"));
+var _users = _interopRequireDefault(require("./server/routes/users.routes"));
 
-var _contents = _interopRequireDefault(require("../server/routes/contents.routes"));
+var _contents = _interopRequireDefault(require("./server/routes/contents.routes"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
