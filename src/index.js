@@ -5,10 +5,10 @@ import dotenv from "dotenv";
 import cors from "cors";
 
 // require auth router
-import regAuthRoutes from "./server/routes/regAuth.routes";
-import placesRoutes from "./server/routes/places.routes";
-import usersRoutes from "./server/routes/users.routes";
-import contentsRoutes from "./server/routes/contents.routes";
+import regAuthRoutes from "../server/routes/regAuth.routes";
+import placesRoutes from "../server/routes/places.routes";
+import usersRoutes from "../server/routes/users.routes";
+import contentsRoutes from "../server/routes/contents.routes";
 
 // instantiate express application
 const app = express();
