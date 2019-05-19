@@ -20,13 +20,19 @@ export default class regAuthController {
       const userData = await Users.create({
         fullname
       });
-      await UserLogins.create({
-        username,
-        password,
-        user_id: userData.dataValues.id
-      });
       if (!userData) return res.status(500).json(authHelper.error);
-      return res.status(201).json(userData);
+      const userLogins = await UserLogins.create(
+        {
+          username,
+          password,
+          user_id: userData.dataValues.id
+        },
+        {
+          attributes: { exclude: ["password"] }
+        }
+      );
+      if (!userLogins) return res.status(500).json(authHelper.error);
+      return res.status(201).json(userLogins);
     } catch (err) {
       return res.status(401).json(err);
     }
