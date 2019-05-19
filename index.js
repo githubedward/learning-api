@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // routes
-app.use("/", regAuthRoutes);
+app.use("", regAuthRoutes);
 app.use("/users", usersRoutes);
 app.use("/places", placesRoutes);
 app.use("/contents", contentsRoutes);
