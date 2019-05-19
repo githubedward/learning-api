@@ -1,4 +1,4 @@
-import express from "express";
+const express = require("express");
 import bodyParser from "body-parser";
 import morgan from "morgan";
 import dotenv from "dotenv";
