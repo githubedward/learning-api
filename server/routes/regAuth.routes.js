@@ -4,8 +4,8 @@ import * as authMiddleware from "../middlewares/auth.middleware";
 
 const router = express.Router();
 
-router.post("/register", regAuth.register);
-router.post("/login", regAuth.login);
-router.get("/authenticated", authMiddleware.authorize, regAuth.authenticated);
+router.post("register", regAuth.register);
+router.post("login", regAuth.login);
+router.get("authenticated", authMiddleware.authorize, regAuth.authenticated);
 
 module.exports = router;
